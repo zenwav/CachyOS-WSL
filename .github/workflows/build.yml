@@ -3,6 +3,11 @@ on:
   push:
     branches:
       - "main"
+    paths:
+      - ".github/workflows/**"
+      - "linux_files/**"
+      - "scripts/**"
+      - "Makefile"
   workflow_dispatch:
   schedule:
     - cron: "0 0 */7 * *"
@@ -55,7 +60,7 @@ jobs:
                         }]' DistributionInfo.json >tmp.json && mv tmp.json DistributionInfo.json
           done
           tee -a /tmp/bodyfile.txt <<-EOF
-          ## sha256sum
+          ### sha256sum
           \`\`\`
           $(cat *.sha256)
           \`\`\`
