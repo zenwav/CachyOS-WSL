@@ -1,0 +1,16 @@
+boot
+dev
+etc/pacman.d/gnupg
+etc/machine-id
+etc/resolv.conf
+home
+mnt
+proc
+root/*
+run
+sys
+tmp
+var/cache/pacman/pkg/*
+var/lib/pacman/sync
+var/log/pacman.log
+var/tmp/*

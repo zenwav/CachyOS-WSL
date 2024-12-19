@@ -1,0 +1,37 @@
+name: build rootfs
+on:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 */7 * *"
+
+jobs:
+  build-rootfs:
+    runs-on: self-hosted
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: build
+        run: |
+          echo "TAG_NAME=$(date +%Y%m%d)" >> $GITHUB_ENV
+          make
+          sha256sum cachyos-v3-rootfs.wsl > cachyos-v3-rootfs.wsl.sha256
+          sha256sum cachyos-v4-rootfs.wsl > cachyos-v4-rootfs.wsl.sha256
+          sha256sum cachyos-znver4-rootfs.wsl > cachyos-znver4-rootfs.wsl.sha256
+      - name: Upload files to GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: |
+            cachyos-v3-rootfs.wsl
+            cachyos-v3-rootfs.wsl.sha256
+            cachyos-v4-rootfs.wsl
+            cachyos-v4-rootfs.wsl.sha256
+            cachyos-znver4-rootfs.wsl
+            cachyos-znver4-rootfs.wsl.sha256
+          tag: ${{ env.TAG_NAME }}
