@@ -10,7 +10,7 @@ on:
       - "Makefile"
   workflow_dispatch:
   schedule:
-    - cron: "0 0 */7 * *"
+    - cron: "0 10 */7 * *"
 
 jobs:
   build-rootfs:
@@ -20,8 +20,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: build
+      - name: Generate rootfs
         run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y make
           make
           sha256sum cachyos-v3-rootfs.wsl >cachyos-v3-rootfs.wsl.sha256
           sha256sum cachyos-v4-rootfs.wsl >cachyos-v4-rootfs.wsl.sha256
@@ -59,7 +61,7 @@ jobs:
                           }
                         }]' DistributionInfo.json >tmp.json && mv tmp.json DistributionInfo.json
           done
-          tee -a /tmp/bodyfile.txt <<-EOF
+          tee /tmp/bodyfile.txt <<-EOF
           ### sha256sum
           \`\`\`
           $(cat *.sha256)
@@ -74,10 +76,7 @@ jobs:
           artifacts: |
             DistributionInfo.json
             cachyos-v3-rootfs.wsl
-            cachyos-v3-rootfs.wsl.sha256
             cachyos-v4-rootfs.wsl
-            cachyos-v4-rootfs.wsl.sha256
             cachyos-znver4-rootfs.wsl
-            cachyos-znver4-rootfs.wsl.sha256
           bodyFile: /tmp/bodyfile.txt
           tag: ${{ env.TAG_NAME }}

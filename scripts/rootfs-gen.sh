@@ -59,6 +59,8 @@ function configure_pacman() {
 # === Initialize the Root Filesystem ===
 function setup_rootfs() {
     echo "Setting up root filesystem in ${BUILDDIR}..."
+    mkdir -p /etc/pacman.d/hooks
+    touch /etc/pacman.d/hooks/30-systemd-tmpfiles.hook
     mkdir -vp "${BUILDDIR}"/{var/lib/pacman,etc}
     ln -sf ../usr/lib/os-release "${BUILDDIR}/etc/os-release"
 }
@@ -83,7 +85,7 @@ function configure_system() {
     sed -i 's,^#Server,Server,g' "${BUILDDIR}/etc/pacman.d/mirrorlist"
     ln -sf /etc/locale.conf "${BUILDDIR}"/etc/default/locale
     cp --recursive --preserve=timestamps "${WORKING_DIR}"/linux_files/* "${BUILDDIR}"
-    rm -rf "${BUILDDIR}"/etc/{resolv.conf,machine-id}
+    rm -rf "${BUILDDIR}"/etc/{resolv.conf,machine-id,hostname,hosts}
 
     # Configure sudo permissions
     echo "%wheel ALL=(ALL) ALL" | tee "${BUILDDIR}/etc/sudoers.d/10-installer" >/dev/null
