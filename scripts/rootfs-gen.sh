@@ -3,7 +3,7 @@
 set -euo pipefail # Enable strict mode for better error handling
 
 # === Configuration Section ===
-declare -r BASE_PACKAGES="base cachyos-hooks cachyos-keyring cachyos-mirrorlist iptables-nft sudo"
+declare -r BASE_PACKAGES="base cachyos-hooks cachyos-keyring cachyos-mirrorlist iptables-nft sudo alhp-keyring alhp-mirrorlist"
 declare -r SERVICES_TO_MASK=(
     systemd-resolved.service
     systemd-networkd.service
@@ -51,17 +51,22 @@ function configure_pacman() {
         ;;
     esac
 
-    curl -sL https://raw.githubusercontent.com/CachyOS/CachyOS-PKGBUILDS/refs/heads/master/pacman/pacman.conf \
-        -o "${PACMAN_CONF}"
+    curl -sL https://raw.githubusercontent.com/CachyOS/CachyOS-PKGBUILDS/refs/heads/master/pacman/pacman.conf -o "${PACMAN_CONF}"
+    pacman-key --recv-key 3056513887B78AEB --keyserver hkps://keyserver.ubuntu.com
+    pacman-key --lsign-key 3056513887B78AEB
+    pacman -U --noconfirm --noprogressbar 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+    pacman -U --noconfirm --noprogressbar 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+    echo -e '[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist' >>"${PACMAN_CONF}"
+    pacman -Sy --config "${PACMAN_CONF}" --noconfirm --noprogressbar alhp-keyring alhp-mirrorlist
+    sed -ri "s_(^(#[[:space:]]*)?\[(core|extra|multilib)\]$)_\2[\3-x86-64-${OPTION/znver4/v4}]\n\2Include = /etc/pacman.d/alhp-mirrorlist\n\n\1_g" "${PACMAN_CONF}"
     gawk -i inplace -f "${PACMAN_AWK}" "${PACMAN_CONF}"
 }
 
 # === Initialize the Root Filesystem ===
 function setup_rootfs() {
     echo "Setting up root filesystem in ${BUILDDIR}..."
-    mkdir -p /etc/pacman.d/hooks
-    touch /etc/pacman.d/hooks/30-systemd-tmpfiles.hook
-    mkdir -vp "${BUILDDIR}"/{var/lib/pacman,etc}
+    mkdir -vp "${BUILDDIR}"/{var/lib/pacman,etc/pacman.d/hooks} /etc/pacman.d/hooks
+    touch {${BUILDDIR},}/etc/pacman.d/hooks/30-systemd-tmpfiles.hook
     ln -sf ../usr/lib/os-release "${BUILDDIR}/etc/os-release"
 }
 
@@ -80,6 +85,7 @@ function install_packages() {
 # === Configure Pacman and System Files ===
 function configure_system() {
     echo "Configuring system files..."
+    sed -ri "s_(^(#[[:space:]]*)?\[(core|extra|multilib)\]$)_\2[\3-x86-64-${OPTION/znver4/v4}]\n\2Include = /etc/pacman.d/alhp-mirrorlist\n\n\1_g" "${BUILDDIR}/etc/pacman.conf"
     gawk -i inplace -f "${PACMAN_AWK}" "${BUILDDIR}/etc/pacman.conf"
     sed -i 's,^#\(Color\|ILoveCandy\),\1,g' "${BUILDDIR}/etc/pacman.conf"
     sed -i 's,^#Server,Server,g' "${BUILDDIR}/etc/pacman.d/mirrorlist"

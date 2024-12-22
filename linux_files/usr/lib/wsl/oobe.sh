@@ -12,7 +12,7 @@ export LANG=$(grep '^LANG=' /etc/locale.conf | cut -d'=' -f2)
 
 echo "Initializing pacman keyring..."
 pacman-key --init
-pacman-key --populate archlinux cachyos
+pacman-key --populate archlinux cachyos alhp
 clear
 
 DEFAULT_GROUPS=sys,network,rfkill,users,video,storage,lp,audio,wheel
