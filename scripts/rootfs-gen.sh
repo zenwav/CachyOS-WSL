@@ -108,7 +108,7 @@ function pack_rootfs() {
     echo "Packing root filesystem into ${ROOTFS_FILE}..."
     (
         cd "${BUILDDIR}"
-        tar --anchored --exclude-from="${WORKING_DIR}/scripts/exclude" --numeric-owner --absolute-names -czf "${WORKING_DIR}/${ROOTFS_FILE}" *
+        tar --anchored --xattrs --exclude-from="${WORKING_DIR}/scripts/exclude" --numeric-owner -czf "${WORKING_DIR}/${ROOTFS_FILE}" *
     )
 }
 
