@@ -74,9 +74,9 @@ jobs:
           allowUpdates: true
           artifactErrorsFailBuild: true
           artifacts: |
-            DistributionInfo.json
             cachyos-v3-rootfs.wsl
             cachyos-v4-rootfs.wsl
             cachyos-znver4-rootfs.wsl
+            DistributionInfo.json
           bodyFile: /tmp/bodyfile.txt
           tag: ${{ env.TAG_NAME }}
