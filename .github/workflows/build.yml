@@ -26,8 +26,6 @@ jobs:
           sudo apt-get install --no-install-recommends -y make
           make
           sha256sum cachyos-v3-rootfs.wsl >cachyos-v3-rootfs.wsl.sha256
-          sha256sum cachyos-v4-rootfs.wsl >cachyos-v4-rootfs.wsl.sha256
-          sha256sum cachyos-znver4-rootfs.wsl >cachyos-znver4-rootfs.wsl.sha256
           TAG_NAME=$(date +%Y%m%d)
           jq -n '{ "ModernDistributions": { "CachyOS": [] } }' >DistributionInfo.json
           cat *.sha256 | while read -r line; do
@@ -75,8 +73,6 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: |
             cachyos-v3-rootfs.wsl
-            cachyos-v4-rootfs.wsl
-            cachyos-znver4-rootfs.wsl
             DistributionInfo.json
           bodyFile: /tmp/bodyfile.txt
           tag: ${{ env.TAG_NAME }}
