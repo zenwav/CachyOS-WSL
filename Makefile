@@ -1,5 +1,5 @@
 SHARED_DIR := /shared
-OPTIONS := v3 v4 znver4
+OPTIONS := v3
 TAR_FILES := $(addprefix cachyos-,$(addsuffix -rootfs.wsl, $(OPTIONS)))
 
 all: $(OPTIONS)
