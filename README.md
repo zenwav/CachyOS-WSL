@@ -1,47 +1,72 @@
-## CachyOS WSL Root Filesystem
+# 🐧 CachyOS WSL Root Filesystem
 
-This project is used to generate the CachyOS root filesystem for WSL.
+This project provides the **CachyOS root filesystem** for running under **Windows Subsystem for Linux (WSL)**.
 
-### Usage
+---
 
-1. Add a registry key:
+## 📥 Download Statistics
 
-    ```cmd
-    reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss" /v DistributionListUrlAppend /t REG_SZ /d "https://github.com/okrc/CachyOS-WSL/releases/latest/download/DistributionInfo.json" /f
-    ```
+Below are the current download stats for each variant of the CachyOS WSL rootfs:
 
-    <details>
+| Variant | Architecture | Downloads |
+|---------|--------------|-----------|
+| **CachyOS v3** | x86-64_v3 | [![v3 Downloads](https://img.shields.io/github/downloads/okrc/CachyOS-WSL/cachyos-v3-rootfs.wsl)](https://github.com/okrc/CachyOS-WSL/releases/latest/download/cachyos-v3-rootfs.wsl) |
+| **CachyOS v4** | x86-64_v4 | [![v4 Downloads](https://img.shields.io/github/downloads/okrc/CachyOS-WSL/cachyos-v4-rootfs.wsl)](https://github.com/okrc/CachyOS-WSL/releases/latest/download/cachyos-v4-rootfs.wsl) |
+| **CachyOS znver4** | AMD Zen 4 | [![znver4 Downloads](https://img.shields.io/github/downloads/okrc/CachyOS-WSL/cachyos-znver4-rootfs.wsl)](https://github.com/okrc/CachyOS-WSL/releases/latest/download/cachyos-znver4-rootfs.wsl) |
 
-    ```powershell
-    New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss -Name DistributionListUrlAppend -Force -Type String -Value https://github.com/okrc/CachyOS-WSL/releases/latest/download/DistributionInfo.json
-    ```
-    </details>
+---
 
-2. List available WSL distributions:
+## 🚀 Quick Start
 
-    ```powershell
-    wsl -l -o
-    ```
+### 1. Add Registry Key for Custom Distribution List
 
-3. Install CachyOS:
+```cmd
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss" /v DistributionListUrlAppend /t REG_SZ /d "https://github.com/okrc/CachyOS-WSL/releases/latest/download/DistributionInfo.json" /f
+```
 
-    ```powershell
-    wsl --install CachyOS
-    ```
+<details>
+<summary>PowerShell</summary>
 
-### Default Shell Configuration
+```powershell
+New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss -Name DistributionListUrlAppend -Force -Type String -Value https://github.com/okrc/CachyOS-WSL/releases/latest/download/DistributionInfo.json
+```
+</details>
 
-CachyOS customizes shell theme packages `cachyos-fish-config` and `cachyos-zsh-config`. You can choose your preferred shell, either fish or zsh.
+### 2. List Available WSL Distributions
 
-- To install fish configuration:
-    ```sh
-    sudo pacman -Sy --needed --noconfirm cachyos-fish-config
-    mkdir -p ~/.config/fish
-    cp /etc/skel/.config/fish/config.fish ~/.config/fish/config.fish
-    ```
+```powershell
+wsl -l -o
+```
 
-- To install zsh configuration:
-    ```sh
-    sudo pacman -Sy --needed --noconfirm cachyos-zsh-config
-    cp /etc/skel/.zshrc ~/
-    ```
+### 3. Install CachyOS
+
+```powershell
+wsl --install CachyOS
+```
+
+---
+
+## 🎨 Default Shell Configuration
+
+CachyOS comes with customized shell themes via `cachyos-fish-config` and `cachyos-zsh-config`. Choose either `fish` or `zsh` for your preferred shell experience.
+
+### 🐟 fish shell setup:
+
+```sh
+sudo pacman -Sy --needed --noconfirm cachyos-fish-config
+mkdir -p ~/.config/fish
+cp /etc/skel/.config/fish/config.fish ~/.config/fish/config.fish
+```
+
+### 💻 zsh shell setup:
+
+```sh
+sudo pacman -Sy --needed --noconfirm cachyos-zsh-config
+cp /etc/skel/.zshrc ~/
+```
+
+---
+
+## 💬 Feedback
+
+Feel free to open issues or pull requests if you encounter problems or want to contribute!
